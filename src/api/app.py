@@ -8,6 +8,10 @@ from ..models.predict import predict, load_model
 
 app = FastAPI(title="CHAB Scoring API")
 
+@app.get("/")
+def root():
+    return {"message": "Welcome to CHAB Scoring API", "docs": "/docs", "health": "/health"}
+
 class ClientPrediction(BaseModel):
     client_id: int
     score: float

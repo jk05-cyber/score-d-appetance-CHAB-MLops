@@ -13,10 +13,10 @@ def add_rc_features(df: pd.DataFrame) -> pd.DataFrame:
     today = pd.Timestamp.today()
     if "birthdate" in df.columns:
         df["age"] = (today - pd.to_datetime(df["birthdate"])).dt.days // 365
-    df["tenure_days"] = (today - pd.to_datetime(df.get("date_opened", today))).dt.days
+    df["tenure_days"] = (today - pd.to_datetime(df.get("DATE_ENTREE_BANQUE", today))).dt.days
 
     # examples of categorical
     socio_map = {"employee": 0, "self_employed": 1, "retired": 2, "unemployed": 3}
-    if "situation" in df.columns:
-        df["socio_pro_idx"] = df["situation"].map(socio_map).fillna(-1)
+    if "SITUATION_FAMILIALE" in df.columns:
+        df["socio_pro_idx"] = df["SITUATION_FAMILIALE"].map(socio_map).fillna(-1)
     return df

@@ -12,6 +12,7 @@ def run(rc_path=None, pc_path=None, mv_path=None, output_path=None):
     feats = create_feature_set(rc, pc, mv)
     X, _ = prepare_for_model(feats)
     preds = predict(X)
+    preds["ID_CLIENT"] = feats["ID_CLIENT"].values
     out_path = output_path or (settings.SCORED_DIR / "batch_scores.csv")
     out_path.parent.mkdir(parents=True, exist_ok=True)
     preds.to_csv(out_path, index=False)

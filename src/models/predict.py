@@ -7,7 +7,7 @@ def load_model(model_path: str = None):
     """Load a model from MLflow or local path."""
     if model_path is None:
         # assume latest run
-        model_path = "models:/logreg/1"  # placeholder
+        model_path = "models:/logreg/latest"
     return mlflow.sklearn.load_model(model_path)
 
 

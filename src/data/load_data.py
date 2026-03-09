@@ -14,21 +14,21 @@ def _read_csv(path: str, **kwargs) -> pd.DataFrame:
 def load_rc(path: str = None) -> pd.DataFrame:
     """Load the RC (client reference) table."""
     path = path or settings.RC_FILE
-    df = _read_csv(path, parse_dates=["date_opened"])
+    df = _read_csv(path, parse_dates=["DATE_ENTREE_BANQUE"])
     return df
 
 
 def load_pc(path: str = None) -> pd.DataFrame:
     """Load product/comptes information."""
     path = path or settings.PC_FILE
-    df = _read_csv(path, parse_dates=["opened_date"])
+    df = _read_csv(path, parse_dates=["DATE_SOUSCRIPTION"])
     return df
 
 
 def load_mouvement(path: str = None) -> pd.DataFrame:
     """Load movement/transaction history."""
     path = path or settings.MOUVEMENT_FILE
-    df = _read_csv(path, parse_dates=["date"])
+    df = _read_csv(path, parse_dates=["DATE_OPERATION"])
     return df
 
 

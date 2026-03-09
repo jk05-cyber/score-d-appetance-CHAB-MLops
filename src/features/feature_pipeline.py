@@ -17,8 +17,8 @@ def create_feature_set(rc: pd.DataFrame, pc: pd.DataFrame, mv: pd.DataFrame) -> 
     mv_feat = add_mouvement_features(mv)
 
     # start with rc, then merge other sets
-    df = rc_feat.merge(pc_feat, on="client_id", how="left")
-    df = df.merge(mv_feat, on="client_id", how="left")
+    df = rc_feat.merge(pc_feat, on="ID_CLIENT", how="left")
+    df = df.merge(mv_feat, on="ID_CLIENT", how="left")
     return df
 
 
@@ -30,5 +30,7 @@ def prepare_for_model(df: pd.DataFrame, target: pd.Series = None) -> Tuple[pd.Da
     y = None
     if "target" in X.columns:
         y = X.pop("target")
-    X = X.drop(columns=[col for col in X.columns if col == "client_id" or col.endswith("date")])
+    X = X.drop(columns=[col for col in X.columns if col == "ID_CLIENT" or "date" in col.lower()])
+    # One-hot encode categorical columns
+    X = pd.get_dummies(X, drop_first=True)
     return X, y

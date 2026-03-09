@@ -9,14 +9,22 @@ from sklearn.metrics import roc_auc_score
 import mlflow
 
 from ..config import settings
-from ..data.build_dataset import load_processed
+from ..data.build_dataset import construct_target
+from ..features.feature_pipeline import create_feature_set
 from ..features.feature_pipeline import prepare_for_model
 
 
 def train_models(df: pd.DataFrame = None) -> dict:
     """Train baseline and advanced models, return metrics and model objects."""
     if df is None:
-        df = load_processed()
+        from ..data.load_data import load_rc, load_pc, load_mouvement
+        rc = load_rc()
+        pc = load_pc()
+        mv = load_mouvement()
+        feats = create_feature_set(rc, pc, mv)
+        target = construct_target(rc, pc, mv)
+        feats[settings.TARGET_COLUMN] = target
+        df = feats
     X, y = prepare_for_model(df.drop(columns=[settings.TARGET_COLUMN]), df[settings.TARGET_COLUMN])
     X_train, X_temp, y_train, y_temp = train_test_split(
         X, y, test_size=settings.TEST_SIZE + settings.VALIDATION_SIZE,
@@ -40,6 +48,7 @@ def train_models(df: pd.DataFrame = None) -> dict:
             auc = roc_auc_score(y_val, y_pred)
             mlflow.log_metric("val_auc", auc)
             mlflow.sklearn.log_model(pipe, name)
+            mlflow.register_model(f"runs:/{mlflow.active_run().info.run_id}/{name}", name)
         results[name] = {"model": pipe, "val_auc": auc}
 
     # select best

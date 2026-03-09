@@ -46,7 +46,71 @@ d’achat immobilier.
 Dans un contexte réel, il faudrait intégrer des règles commerciales et valider
 les définitions avec les experts métier.
 
-## 🛠️ Fonctionnalités implémentées
+## � Usage
+
+### Prerequisites
+- Python 3.11+
+- Install dependencies: `pip install -r requirements.txt`
+
+### Running the Pipelines
+
+1. **Training Pipeline**:
+   ```bash
+   python pipelines/training_flow.py
+   ```
+   This builds the dataset, engineers features, trains models (Logistic Regression and Random Forest), and logs results to MLflow.
+
+2. **Scoring Pipeline**:
+   ```bash
+   python pipelines/scoring_flow.py
+   ```
+   This loads the trained model and scores all clients in the data, saving predictions to `src/data/scored/batch_scores.csv`.
+
+### Running the API
+
+Start the FastAPI service:
+```bash
+uvicorn src.api.app:app --host 0.0.0.0 --port 8000
+```
+
+Test the health endpoint:
+```bash
+curl http://localhost:8000/health
+```
+
+### Running Tests
+
+```bash
+pytest tests/
+```
+
+### Containerization
+
+Build and run with Docker Compose:
+```bash
+docker-compose up -d
+```
+
+This starts the API and MLflow server.
+
+## 📈 Monitoring
+
+Run drift detection:
+```bash
+python -c "from src.monitoring.drift_report import generate_report; print(generate_report('src/data/processed/dataset.csv', 'src/data/scored/batch_scores.csv'))"
+```
+
+## 🧪 Model Improvement
+
+To improve the model:
+- Experiment with additional features in `src/features/`
+- Tune hyperparameters in `src/models/train.py`
+- Try advanced models like XGBoost
+
+## 📚 Documentation
+
+- API docs available at `http://localhost:8000/docs` when running
+- MLflow UI at `http://localhost:5000` for experiment tracking
 
 * ingestion et validation des données (`src/data/`)
 * feature engineering modulaire (`src/features/`)

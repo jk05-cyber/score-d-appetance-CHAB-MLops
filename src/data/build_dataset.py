@@ -9,15 +9,15 @@ from ..config import settings
 def construct_target(rc: pd.DataFrame, pc: pd.DataFrame, mv: pd.DataFrame) -> pd.Series:
     """Define a simple target: client opened a habitat loan in PC within last year.
 
-    Hypothesis: any product type 'habitat_loan' opened within the last 365 days indicates
+    Hypothesis: any product type 'CREDIT_CONSO' opened within the last 365 days indicates
     a positive label. This is illustrative; in real life, business rules would be
     far more complex.
     """
     import numpy as np
     reference = pd.Timestamp.today()
     pc = pc.copy()
-    pc["recent_habitat"] = ((pc["product_type"] == "habitat_loan") &
-                              ((reference - pc["opened_date"]).dt.days <= 365))
+    pc["recent_habitat"] = ((pc["TYPE_PRODUIT"] == "CREDIT_CONSO") &
+                              ((reference - pc["DATE_SOUSCRIPTION"]).dt.days <= 365))
     flagged = pc.loc[pc["recent_habitat"], settings.ID_COL].unique()
     return rc[settings.ID_COL].isin(flagged).astype(int)
 
@@ -29,9 +29,9 @@ def build_dataset(save_path: str = None) -> pd.DataFrame:
     mv = load_mouvement()
 
     # basic merge on client id
-    df = rc.merge(pc.groupby(settings.ID_COL)["product_type"].nunique().reset_index(
+    df = rc.merge(pc.groupby(settings.ID_COL)["TYPE_PRODUIT"].nunique().reset_index(
         name="n_products"), on=settings.ID_COL, how="left")
-    df = df.merge(mv.groupby(settings.ID_COL)["amount"].sum().reset_index(
+    df = df.merge(mv.groupby(settings.ID_COL)["MONTANT"].sum().reset_index(
         name="total_amount"), on=settings.ID_COL, how="left")
 
     # target

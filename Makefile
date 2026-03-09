@@ -1,17 +1,26 @@
 install:
-	python -m pip install -r requirements.txt
+	python3 -m pip install -r requirements.txt
 
 train:
-	python -m pipelines.training_flow
+	PYTHONPATH=. python3 -m pipelines.training_flow
 
 score:
-	python -m pipelines.scoring_flow
+	PYTHONPATH=. python3 -m pipelines.scoring_flow
 
 test:
-	pytest -q
+	python3 -m pytest tests/ -q --tb=no
 
 api:
-	uvicorn src.api.app:app --reload
+	PYTHONPATH=. python3 -m uvicorn src.api.app:app --reload
 
 lint:
-	flake8 src tests
+	python3 -m flake8 src tests
+
+drift:
+	PYTHONPATH=. python3 -c "from src.monitoring.drift_report import generate_report; import os; os.makedirs('src/data/reports', exist_ok=True); generate_report('src/data/processed/dataset.csv', 'src/data/scored/batch_scores.csv', 'src/data/reports/drift_report.csv'); print('✅ Drift report generated')"
+
+pipeline: test train score drift
+
+all: test train score drift api
+
+.PHONY: install train score test api lint drift pipeline all

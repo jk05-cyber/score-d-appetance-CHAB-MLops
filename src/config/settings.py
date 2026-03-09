@@ -4,7 +4,7 @@ from pathlib import Path
 # base directories
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-DATA_DIR = BASE_DIR / "data"
+DATA_DIR = BASE_DIR / "src" / "data"
 RAW_DIR = DATA_DIR / "raw"
 INTERIM_DIR = DATA_DIR / "interim"
 PROCESSED_DIR = DATA_DIR / "processed"
@@ -20,7 +20,7 @@ PC_FILE = RAW_DIR / "PC.csv"
 MOUVEMENT_FILE = RAW_DIR / "MOUVEMENT.csv"
 
 # modeling configuration
-ID_COL = "client_id"
+ID_COL = "ID_CLIENT"
 TARGET_COLUMN = "chab_target"
 
 RANDOM_STATE = 42
@@ -33,9 +33,9 @@ CATEGORICAL_FEATURES = []
 
 # validation thresholds
 REQUIRED_COLUMNS = {
-    "RC": ["client_id", "age", "date_opened"],
-    "PC": ["client_id", "product_type", "opened_date"],
-    "MOUVEMENT": ["client_id", "amount", "date"]
+    "RC": ["ID_CLIENT", "AGE", "DATE_ENTREE_BANQUE"],
+    "PC": ["ID_CLIENT", "TYPE_PRODUIT", "DATE_SOUSCRIPTION"],
+    "MOUVEMENT": ["ID_CLIENT", "MONTANT", "DATE_OPERATION"]
 }
 
 MISSING_VALUE_THRESHOLD = 0.2

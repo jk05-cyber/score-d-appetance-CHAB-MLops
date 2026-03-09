@@ -3,13 +3,21 @@ from src.models.train import train_models
 
 
 def test_train_runs(tmp_path, monkeypatch):
-    # create a tiny dataset with target
+    # create a larger dataset with target
+    import numpy as np
+    np.random.seed(42)
+    n_samples = 100
     df = pd.DataFrame({
-        "client_id": [1,2,3,4],
-        "age": [30,40,50,60],
-        "sum_amount": [100,200,300,400],
-        "n_products": [1,2,1,3],
-        "chab_target": [0,1,0,1]
+        "ID_CLIENT": range(1, n_samples + 1),
+        "AGE": np.random.randint(20, 80, n_samples),
+        "tenure_days": np.random.randint(100, 3000, n_samples),
+        "n_products": np.random.randint(1, 5, n_samples),
+        "sum_amount": np.random.rand(n_samples) * 10000,
+        "mean_amount": np.random.rand(n_samples) * 5000,
+        "std_amount": np.random.rand(n_samples) * 2000,
+        "n_transactions": np.random.randint(1, 50, n_samples),
+        "net_flow": np.random.rand(n_samples) * 5000 - 2500,
+        "chab_target": np.random.randint(0, 2, n_samples)
     })
     results = train_models(df)
     assert "best" in results
